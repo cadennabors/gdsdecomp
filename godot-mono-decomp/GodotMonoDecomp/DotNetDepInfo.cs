@@ -27,6 +27,7 @@ public class DotNetCoreDepInfo
 	public readonly bool Serviceable;
 	public readonly DotNetCoreDepInfo[] deps;
 	public readonly string[] runtimeComponents;
+	public readonly string[] nativeComponents;
 	public HashMatchesNugetOrg HashMatchesNugetOrgStatus { get; private set; } = HashMatchesNugetOrg.Unknown;
 	public AssemblyNameReference AssemblyRef => AssemblyNameReference.Parse($"{Name}, Version={GetCorrectVersion(Version)}, Culture=neutral, PublicKeyToken=null");
 
@@ -50,7 +51,9 @@ public class DotNetCoreDepInfo
 		bool serviceable,
 		string path,
 		string sha512,
-		DotNetCoreDepInfo[] deps, string[] runtimeComponents)
+		DotNetCoreDepInfo[] deps,
+		string[] runtimeComponents,
+		string[] nativeComponents)
 	{
 		var parts = fullName.Split('/');
 		this.Name = parts[0];
@@ -70,6 +73,7 @@ public class DotNetCoreDepInfo
 
 		this.deps = deps;
 		this.runtimeComponents = runtimeComponents;
+		this.nativeComponents = nativeComponents;
 	}
 
 	static DotNetCoreDepInfo CreateFromJson(string fullName, string version, string target, JObject blob)
@@ -118,8 +122,20 @@ public class DotNetCoreDepInfo
 			}
 		}
 
+		string[] nativeComponents = Array.Empty<string>();
+		var nativeBlob = blob["targets"]?[target]?[Name + "/" + Version]?["native"] as JObject;
+		if (nativeBlob != null)
+		{
+			nativeComponents = new string[nativeBlob.Count];
+			int i = 0;
+			foreach (var prop in nativeBlob.Properties())
+			{
+				nativeComponents[i] = prop.Name;
+				i++;
+			}
+		}
 		var deps = getDeps(Name, Version, target, blob, _deps);
-		return new DotNetCoreDepInfo(Name, Version, type, serviceable, path, sha512, deps, runtimeComponents);
+		return new DotNetCoreDepInfo(Name, Version, type, serviceable, path, sha512, deps, runtimeComponents, nativeComponents);
 	}
 
 
