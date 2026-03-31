@@ -630,7 +630,7 @@ namespace GodotMonoDecomp
 
 			foreach (var reference in module.AssemblyReferences.Where(r => !ImplicitReferences.Contains(r.Name)))
 			{
-				if (isNetCoreApp && (runtimepackComponents.Contains(reference.Name) || (
+				if (isNetCoreApp && (runtimepackComponents.Any(c => c.Matches(reference)) || (
 				    project.AssemblyReferenceClassifier.IsSharedAssembly(reference, out string? runtimePack) &&
 				    targetPacks.Contains(runtimePack))))
 				{
