@@ -109,6 +109,8 @@ static public class Lib
 	{
 		private delegate int ProgressFunction(IntPtr userData, int current, int total, IntPtr status);
 
+		private event Action<DecompilationProgress>? OnProgress = null;
+
 		private readonly ProgressFunction? progressFunction;
 		private readonly IntPtr userData;
 

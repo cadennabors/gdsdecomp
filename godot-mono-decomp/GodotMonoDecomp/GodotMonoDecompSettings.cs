@@ -50,6 +50,12 @@ public class GodotMonoDecompSettings : DecompilerSettings
 	/// </summary>
 	public bool EnableCollectionInitializerLifting { get; set; } = true;
 
+	/// <summary>
+	/// Emit ILInstruction annotations as comments for statement/expression nodes.
+	/// Intended for debug verification of annotation propagation.
+	/// </summary>
+	public bool EmitILAnnotationComments { get; set; } = false;
+
 	private void InitializeDefaultSettings()
 	{
 		UseNestedDirectoriesForNamespaces = true;
@@ -78,6 +84,7 @@ public class GodotMonoDecompSettings : DecompilerSettings
 		settings.OverrideLanguageVersion = OverrideLanguageVersion;
 		settings.GodotVersionOverride = GodotVersionOverride;
 		settings.EnableCollectionInitializerLifting = EnableCollectionInitializerLifting;
+		settings.EmitILAnnotationComments = EmitILAnnotationComments;
 		return settings;
 	}
 

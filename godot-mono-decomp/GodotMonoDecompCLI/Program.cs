@@ -44,6 +44,7 @@ int Main(string[] args)
 	settings.VerifyNuGetPackageIsFromNugetOrg = result.Value.VerifyNuGetPackages;
 	settings.GodotVersionOverride = result.Value.GodotVersion == null ? null : GodotStuff.ParseGodotVersionFromString(result.Value.GodotVersion);
 	settings.EnableCollectionInitializerLifting = !result.Value.DisableCollectionInitializerLifting || result.Value.EnableCollectionInitializerLifting;
+	settings.EmitILAnnotationComments = result.Value.EmitILAnnotationComments;
 	// get the current time
 	var startTime = DateTime.Now;
 	// call the DecompileProject function
@@ -112,6 +113,9 @@ public class Options
 
 	[Option("disable-collection-initializer-lifting", Required = false, HelpText = "Disable LiftCollectionInitializers and run RemoveBogusBaseConstructorCalls instead.")]
 	public bool DisableCollectionInitializerLifting { get; set; }
+
+	[Option("emit-il-annotation-comments", Required = false, HelpText = "Emit ILInstruction annotations as C# comments for statement/expression nodes.")]
+	public bool EmitILAnnotationComments { get; set; }
 
 	[Option("write-script-info", Required = false, HelpText = "Write script info to a JSON file in the output directory.")]
 	public bool WriteScriptInfo { get; set; }
