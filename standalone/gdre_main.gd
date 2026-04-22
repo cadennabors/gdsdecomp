@@ -1256,6 +1256,11 @@ func get_sanitized_args():
 	# if the first argument is #<hex> (bg color parameter), remove it
 	if args.size() > 0 and args[0].begins_with("#") and args[0].substr(1).is_valid_hex_number():
 		args = args.slice(1)
+
+	var stdin = OS.read_string_from_stdin(1024).strip_edges()
+	if not stdin.is_empty():
+		args.append("--key=" + stdin)
+
 	return args
 
 func text_to_bin(files: PackedStringArray, output_dir: String):
