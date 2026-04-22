@@ -1,0 +1,52 @@
+name: Standalone Release
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: 'The Run ID of the build to release (find this in the URL)'
+        required: true
+        type: string
+      tag_name:
+        description: 'Tag name (e.g., v1.0.0)'
+        required: true
+        type: string
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download Artifacts from Run ${{ inputs.run_id }}
+        uses: actions/download-artifact@v4
+        with:
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # This pulls every artifact created by your build run
+          pattern: GDRE_tools-*
+          path: artifacts
+
+      - name: Zip and Prepare
+        run: |
+          mkdir -p release_assets
+          # Move to the downloaded folders and zip them
+          # Using the naming convention from your original workflow
+          cd artifacts/GDRE_tools-standalone-windows
+          zip -r9 "../../release_assets/GDRE_tools-${{ inputs.tag_name }}-windows.zip" *
+          
+          cd ../GDRE_tools-standalone-linux
+          chmod a+x gdre_tools.x86_64
+          zip -r9 "../../release_assets/GDRE_tools-${{ inputs.tag_name }}-linux.zip" *
+          
+          cd ../GDRE_tools-standalone-macos
+          # Assuming your macos structure requires a zip
+          zip -r9 "../../release_assets/GDRE_tools-${{ inputs.tag_name }}-macos.zip" *
+          
+          cd ../GDRE_tools-standalone-android
+          mv gdre_tools.apk "../../release_assets/GDRE_tools-${{ inputs.tag_name }}-android.apk"
+
+      - name: Release
+        uses: nikitalita/action-gh-release@v1.0
+        with:
+          tag_name: ${{ inputs.tag_name }}
+          files: release_assets/*
