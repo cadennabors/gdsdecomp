@@ -41,9 +41,6 @@ jobs:
           cd ../GDRE_tools-standalone-macos
           # Assuming your macos structure requires a zip
           zip -r9 "../../release_assets/GDRE_tools-${{ inputs.tag_name }}-macos.zip" *
-          
-          cd ../GDRE_tools-standalone-android
-          mv gdre_tools.apk "../../release_assets/GDRE_tools-${{ inputs.tag_name }}-android.apk"
 
       - name: Release
         uses: nikitalita/action-gh-release@v1.0
