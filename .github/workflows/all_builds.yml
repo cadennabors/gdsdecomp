@@ -106,16 +106,6 @@ jobs:
             sconsflags: production=yes debug_symbols=no optimize=size use_lto=yes
             bin: ./bin/godot.linuxbsd.editor.x86_64
 
-          - name: "🤖 Android Template Release"
-            os: "ubuntu-22.04"
-            id: android-template
-            platform: android
-            target: template_release
-            rust-arch: x86_64-linux-android
-            alt-rust-arch: aarch64-linux-android
-            sconsflags: production=yes debug_symbols=no optimize=size use_lto=yes generate_android_binaries=yes
-            bin: ./bin/godot.linuxbsd.editor.x86_64
-
           - name: "🍎 macOS Editor"
             os: "macos-latest"
             id: macos-editor
@@ -393,15 +383,6 @@ jobs:
             export-name: .export/gdre_tools.x86_64
             debug: false
 
-          - name: "🤖 Android"
-            os: "ubuntu-24.04"
-            editor: linux
-            platform: android
-            command-export: ${env:GITHUB_WORKSPACE}/bin/godot.linuxbsd.editor.x86_64
-            export-preset: "Android"
-            export-name: .export/gdre_tools.apk
-            debug: false
-
           - name: "🍎 macOS"
             os: "macos-latest"
             editor: macos
@@ -512,11 +493,6 @@ jobs:
         with:
           name: GDRE_tools-standalone-windows
           path: artifacts/windows
-      - name: Download Android artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: GDRE_tools-standalone-android
-          path: artifacts/android
       - name: Zip artifacts
         run: |
           ls -la artifacts/*
@@ -527,8 +503,6 @@ jobs:
           cd artifacts/linux
           chmod a+x gdre_tools.x86_64
           zip -r9  "../GDRE_tools-${{ github.ref_name }}-linux.zip" *
-          cd ../android
-          mv gdre_tools.apk "../GDRE_tools-${{ github.ref_name }}-android.apk"
       - name: Release
         uses: nikitalita/action-gh-release@v1.0
         with:
@@ -536,4 +510,3 @@ jobs:
             artifacts/GDRE_tools-${{ github.ref_name }}-windows.zip
             artifacts/GDRE_tools-${{ github.ref_name }}-macos.zip
             artifacts/GDRE_tools-${{ github.ref_name }}-linux.zip
-            artifacts/GDRE_tools-${{ github.ref_name }}-android.apk
